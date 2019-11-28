@@ -1,11 +1,11 @@
 var nodemailer = require('nodemailer');
 
-const serverMail="abcd@gmail.com"; //from which mail you want to send the mails
+const serverMail="abcde@gmail.com"; //from which mail you want to send the mails
 var transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: serverMail,
-    pass: 'password of above mail'
+    pass: 'pass_of_above_mail make sure allwo access to insecure apps is turned on in gmail'
   }
 });
 
@@ -45,10 +45,11 @@ async function sendMail(to,from,subject,body){
     //sgMail.send(msg);
     try{
     var resp=await transporter.sendMail(msg);
-        //console.log(resp)
+        console.log("Sent")
         return "Successfully Sent!"
     }catch(err){
-        return err
+		console.log(err.substring(0,15))
+        return err.substring(0,15)
     }
     
 }
@@ -60,7 +61,7 @@ async function sendsms(to,msg){
     try{
         const response=await axios.get('https://api.textlocal.in/send?apikey='+encodeURIComponent(key)+'&numbers='+encodeURIComponent(to)+'&sender='+encodeURIComponent("TXTLCL")+'&message='+encodeURIComponent(msg));
 
-       // console.log(response.data);
+        console.log(response.data);
         if(JSON.stringify(response.data).indexOf("errors")>=0)
             return -1
         else
