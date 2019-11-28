@@ -117,7 +117,7 @@ app.get('/checkin', function(req, res) {
             if(rows[0].length==0)
             {
                 var currentTime=Date.now();
-               const res=await con.query("insert into checkin(name,email,phone,checkin,checkout) values('"+name+"','"+email+"','"+phone+"','"+currentTime+"','null'   )");
+               const res=await con.query("insert into checkin(name,email,phone,checkin,checkout,hostname) values('"+name+"','"+email+"','"+phone+"','"+currentTime+"','null' ,'"+hostname+"'  )");
                 
                 console.log("inserted");
                 
@@ -127,7 +127,7 @@ app.get('/checkin', function(req, res) {
                 
                 if(ret==1){
                     resp.status="200";
-                    resp.msg="Successfully Checked In.\n"+"Email Status : "+"Email Status : "+mailresp;
+                    resp.msg="Successfully Checked In.\n"+"Email Status : "+mailresp;
                 }
                 else{
                     resp.status="201"
@@ -143,7 +143,7 @@ app.get('/checkin', function(req, res) {
                 {
                     //update
                     var currentTime=Date.now();
-                    const res=await con.query("update checkin set name='"+name+"', email='"+email+"' ,checkin='"+currentTime+"',checkout='null' where phone='"+phone+"' ;  ");
+                    const res=await con.query("update checkin set name='"+name+"', email='"+email+"' ,checkin='"+currentTime+"',checkout='null' ,hostname='"+hostname+"' where phone='"+phone+"' ;  ");
                      
                     console.log("Updated");
                     
@@ -232,7 +232,7 @@ app.get('/checkout', function(req, res) {
                      
                     console.log("Checkd Out");
                     
-                    var mailresp=await sendMail(rows[0][0].email,serverMail,"Details about your visit!","<h2>Hi "+name+" ,</h2> <br>Here are the details regarding your recent visit.\<br><br><b><u>Visit Details:</u></b><br><b>Name : </b>"+name+"<br><b>E-mail : </b>"+email+"<br><b>Phone : </b>"+phone+"<br><b>CheckIn Time : </b>"+getTime(rows[0][0].checkin)+"<br><b>CheckOut Time :</b>"+getTime(currentTime)+"<br><br><br>Thank You!");
+                    var mailresp=await sendMail(rows[0][0].email,serverMail,"Details about your visit!","<h2>Hi "+name+" ,</h2> <br>Here are the details regarding your recent visit.\<br><br><b><u>Visit Details:</u></b><br><b>Name : </b>"+name+"<br><b>E-mail : </b>"+email+"<br><b>Phone : </b>"+phone+"<br><b>Host Name :</b>"+rows[0][0].hostname+"<br><b>CheckIn Time : </b>"+getTime(rows[0][0].checkin)+"<br><b>CheckOut Time :</b>"+getTime(currentTime)+"<br><br><br>Thank You!");
                     
                  
                     

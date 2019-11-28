@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 28, 2019 at 08:04 AM
+-- Generation Time: Nov 28, 2019 at 11:12 AM
 -- Server version: 10.1.35-MariaDB
 -- PHP Version: 7.2.9
 
@@ -35,7 +35,8 @@ CREATE TABLE `checkin` (
   `email` varchar(50) NOT NULL,
   `phone` varchar(20) NOT NULL,
   `checkin` varchar(100) NOT NULL,
-  `checkout` varchar(100) NOT NULL
+  `checkout` varchar(100) NOT NULL,
+  `hostname` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
