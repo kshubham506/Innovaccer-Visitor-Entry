@@ -1,6 +1,15 @@
+var nodemailer = require('nodemailer');
+
+const serverMail="abcd@gmail.com"; //from which mail you want to send the mails
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: serverMail,
+    pass: 'password of above mail'
+  }
+});
 
 
-const serverMail="kshubham506@gmail.com"; //from which mail you want to receive the mails
 //=======================================================
 
 
@@ -24,8 +33,8 @@ const con = mysql.createPool({
 });
 
 
-function sendMail(to,from,subject,body){
-    sgMail.setApiKey('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');
+async function sendMail(to,from,subject,body){
+    //sgMail.setApiKey('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');
     const msg = {
       to: to,
       from: from,
@@ -33,7 +42,15 @@ function sendMail(to,from,subject,body){
       text: body,
       html: body,
     };
-    sgMail.send(msg);
+    //sgMail.send(msg);
+    try{
+    var resp=await transporter.sendMail(msg);
+        //console.log(resp)
+        return "Successfully Sent!"
+    }catch(err){
+        return err
+    }
+    
 }
 
 async function sendsms(to,msg){
@@ -43,7 +60,7 @@ async function sendsms(to,msg){
     try{
         const response=await axios.get('https://api.textlocal.in/send?apikey='+encodeURIComponent(key)+'&numbers='+encodeURIComponent(to)+'&sender='+encodeURIComponent("TXTLCL")+'&message='+encodeURIComponent(msg));
 
-        console.log(response.data);
+       // console.log(response.data);
         if(JSON.stringify(response.data).indexOf("errors")>=0)
             return -1
         else
@@ -105,17 +122,17 @@ app.get('/checkin', function(req, res) {
                 
                 console.log("inserted");
                 
-                sendMail(hostmail,serverMail,"You have a new visitor!","<h2>Hi "+hostname+" ,</h2> <br>You have a new visitor today.\<br><br><b><u>Visitor Details:</u></b><br><b>Name : </b>"+name+"<br><b>E-mail : </b>"+email+"<br><b>Phone : </b>"+phone+"<br><br><br>Thank You!");
+                var mailresp=await sendMail(hostmail,serverMail,"You have a new visitor!","<h2>Hi "+hostname+" ,</h2> <br>You have a new visitor today.\<br><br><b><u>Visitor Details:</u></b><br><b>Name : </b>"+name+"<br><b>E-mail : </b>"+email+"<br><b>Phone : </b>"+phone+"<br><br><br>Thank You!");
                 
                 var ret=await sendsms(hostphone,"You have got a new visitor.\n\nVistor Name :"+name+"\nEmail :"+email+"\nPhone :"+phone);
                 
                 if(ret==1){
                     resp.status="200";
-                    resp.msg="Successfully Checked In";
+                    resp.msg="Successfully Checked In.\n"+"Email Status : "+"Email Status : "+mailresp;
                 }
                 else{
                     resp.status="201"
-                    resp.msg="Successfully Checked In but unable to send sms.";
+                    resp.msg="Successfully Checked In but unable to send sms.\n"+"Email Status : "+mailresp;
                 }                
             }
             else
@@ -131,17 +148,17 @@ app.get('/checkin', function(req, res) {
                      
                     console.log("Updated");
                     
-                    sendMail(hostmail,serverMail,"You have a new visitor!","<h2>Hi "+hostname+" ,</h2> <br>You have a new visitor today.\<br><br><b><u>Visitor Details:</u></b><br><b>Name : </b>"+name+"<br><b>E-mail : </b>"+email+"<br><b>Phone : </b>"+phone+"<br><br><br>Thank You!");
+                    var mailresp=await sendMail(hostmail,serverMail,"You have a new visitor!","<h2>Hi "+hostname+" ,</h2> <br>You have a new visitor today.\<br><br><b><u>Visitor Details:</u></b><br><b>Name : </b>"+name+"<br><b>E-mail : </b>"+email+"<br><b>Phone : </b>"+phone+"<br><br><br>Thank You!");
                     
                     var ret=await sendsms(hostphone,"You have got a new visitor.\n\nVistor Name :"+name+"\nEmail :"+email+"\nPhone :"+phone);
                     
                     if(ret==1){
                         resp.status="200";
-                        resp.msg="Successfully Checked In";
+                        resp.msg="Successfully Checked In.\n"+"Email Status : "+mailresp;
                     }
                     else{
                         resp.status="201"
-                        resp.msg="Successfully Checked In but unable to send sms.";
+                        resp.msg="Successfully Checked In but unable to send sms.\n"+"Email Status : "+mailresp;
                     } 
                     
                    
@@ -216,13 +233,13 @@ app.get('/checkout', function(req, res) {
                      
                     console.log("Checkd Out");
                     
-                    sendMail(rows[0][0].email,serverMail,"Details about your visit!","<h2>Hi "+name+" ,</h2> <br>Here are the details regarding your recent visit.\<br><br><b><u>Visit Details:</u></b><br><b>Name : </b>"+name+"<br><b>E-mail : </b>"+email+"<br><b>Phone : </b>"+phone+"<br><b>CheckIn Time : </b>"+getTime(rows[0][0].checkin)+"<br><b>CheckOut Time :</b>"+getTime(currentTime)+"<br><br><br>Thank You!");
+                    var mailresp=await sendMail(rows[0][0].email,serverMail,"Details about your visit!","<h2>Hi "+name+" ,</h2> <br>Here are the details regarding your recent visit.\<br><br><b><u>Visit Details:</u></b><br><b>Name : </b>"+name+"<br><b>E-mail : </b>"+email+"<br><b>Phone : </b>"+phone+"<br><b>CheckIn Time : </b>"+getTime(rows[0][0].checkin)+"<br><b>CheckOut Time :</b>"+getTime(currentTime)+"<br><br><br>Thank You!");
                     
                  
                     
                    
                     resp.status="200";
-                    resp.msg="Successfully Checked Out!";
+                    resp.msg="Successfully Checked Out!\n"+"Email Status : "+mailresp;
                 }
                 else
                 {
