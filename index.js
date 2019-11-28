@@ -8,7 +8,7 @@ var transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: serverMail,
-    pass: 'pass_of_above_mail make sure allwo access to insecure apps is turned on in gmail'
+    pass: 'pass_of_above_mail , make sure  allow access to insecure apps is turned on in gmail'
   }
 });
 
