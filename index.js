@@ -1,4 +1,7 @@
 var nodemailer = require('nodemailer');
+const mysql = require('mysql2/promise');
+
+//===============================================make changes in thsi section
 
 const serverMail="abcde@gmail.com"; //from which mail you want to send the mails
 var transporter = nodemailer.createTransport({
@@ -10,18 +13,6 @@ var transporter = nodemailer.createTransport({
 });
 
 
-//=======================================================
-
-
-var express=require('express');
-const axios = require('axios');
-const sgMail = require('@sendgrid/mail');
-const mysql = require('mysql2/promise');
-
-const app=express();
-const path = require('path');
-app.use(express.static(__dirname));
-
 const con = mysql.createPool({
   host: 'localhost',
   user: 'root',
@@ -32,9 +23,17 @@ const con = mysql.createPool({
   queueLimit: 0
 });
 
+//=======================================================
+
+
+var express=require('express');
+const axios = require('axios');
+const app=express();
+const path = require('path');
+app.use(express.static(__dirname));
+
 
 async function sendMail(to,from,subject,body){
-    //sgMail.setApiKey('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');
     const msg = {
       to: to,
       from: from,
@@ -42,7 +41,6 @@ async function sendMail(to,from,subject,body){
       text: body,
       html: body,
     };
-    //sgMail.send(msg);
     try{
     var resp=await transporter.sendMail(msg);
         console.log("Sent")
@@ -57,7 +55,7 @@ async function sendMail(to,from,subject,body){
 async function sendsms(to,msg){
     
     const key=encodeURIComponent("yiAMvK/eHtQ-Of1nkIl2g4GuiAtoWr1hl6mCuvQ4Xp");
-   // console.log(encodeURIComponent(msg)+" : "+encodeURIComponent(to));
+  
     try{
         const response=await axios.get('https://api.textlocal.in/send?apikey='+encodeURIComponent(key)+'&numbers='+encodeURIComponent(to)+'&sender='+encodeURIComponent("TXTLCL")+'&message='+encodeURIComponent(msg));
 
